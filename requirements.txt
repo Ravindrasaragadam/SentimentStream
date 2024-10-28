@@ -1,6 +1,6 @@
 # Apache Airflow dependencies
 apache-airflow==2.10.2
-apache-airflow-providers-postgres==5.13.1
+apache-airflow-providers-postgres==5.13.0
 
 # For web scraping
 beautifulsoup4==4.12.2
