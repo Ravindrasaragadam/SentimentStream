@@ -1,6 +1,12 @@
 # Use the base Airflow image
 FROM apache/airflow:2.10.2
 
+# Copy requirements.txt into the container
+COPY ./requirements.txt /requirements.txt
+
+# Install the Python packages, including Playwright
+RUN pip install --no-cache-dir -r /requirements.txt
+
 USER root
 
 # Install Playwright dependencies
@@ -18,15 +24,8 @@ RUN playwright install
 
 # Set the browser path environment variable
 ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright-browsers
-ENV CONFIG_PATH=/opt/airflow/configs/
 
 USER airflow
-
-# Copy requirements.txt into the container
-COPY ./requirements.txt /requirements.txt
-
-# Install the Python packages, including Playwright
-RUN pip install --no-cache-dir -r /requirements.txt
 
 # Copy your project files into the container
 COPY ./dags /opt/airflow/dags
