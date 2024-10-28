@@ -17,7 +17,7 @@ x-airflow-common:
     # Environment variables for storage options
     AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
     AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
-    ENV PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
+    CONFIG_PATH: /opt/airflow/configs/
 
   volumes:
     - ${AIRFLOW_PROJ_DIR:-.}/dags:/opt/airflow/dags

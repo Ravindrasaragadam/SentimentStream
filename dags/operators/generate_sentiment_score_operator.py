@@ -9,6 +9,10 @@ class GenerateSentimentScoreOperator(BaseOperator):
         super(GenerateSentimentScoreOperator, self).__init__(*args, **kwargs)
         self.parent_id = parent_id
 
+    def generate_sentiment_score(self, article):
+        sentiment_score = random.uniform(0, 1)
+        return sentiment_score
+
     def execute(self, context):
         articles = context['task_instance'].xcom_pull(task_ids=self.parent_id)
 

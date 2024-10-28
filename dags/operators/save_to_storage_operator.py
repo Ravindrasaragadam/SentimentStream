@@ -5,10 +5,11 @@ import json
 import configparser
 import os
 
+CONFIG_PATH = "CONFIG_PATH"
 # Load configurations
 config = configparser.ConfigParser()
-storage_config_location = os.path.abspath('/opt/airflow/configs/storage_config.ini')
-paths_config_location = os.path.abspath('/opt/airflow/configs/paths_config.ini')
+storage_config_location = os.path.abspath(os.environ.get(CONFIG_PATH, 'configs/')+'storage_config.ini')
+paths_config_location = os.path.abspath(os.environ.get(CONFIG_PATH, 'configs/')+'paths_config.ini')
 config.read(storage_config_location)
 config.read(paths_config_location)
 

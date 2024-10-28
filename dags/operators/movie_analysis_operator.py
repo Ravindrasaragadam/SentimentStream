@@ -6,12 +6,13 @@ import psycopg2
 import json
 
 # Load configurations
+CONFIG_PATH = "CONFIG_PATH"
 config = configparser.ConfigParser()
-storage_config_location = os.path.abspath('/opt/airflow/configs/storage_config.ini')
-paths_config_location = os.path.abspath('/opt/airflow/configs/paths_config.ini')
+storage_config_location = os.path.abspath(os.environ.get(CONFIG_PATH, 'configs/')+'storage_config.ini')
+paths_config_location = os.path.abspath(os.environ.get(CONFIG_PATH, 'configs/')+'paths_config.ini')
 config.read(storage_config_location)
 config.read(paths_config_location)
-
+print(storage_config_location)
 STORAGE_TYPE = config['General']['storage_type']
 OUTPUT_FILE_PATH = config['Paths']['output_file_path'] 
 
@@ -29,8 +30,9 @@ class MovieAnalysisOperator(BaseOperator):
         
         # Load configuration
         config = configparser.ConfigParser()
-        storage_config_location = os.path.abspath('/opt/airflow/configs/paths_config.ini')
-        config.read(storage_config_location)
+        paths_config_location = os.path.abspath(os.environ.get(CONFIG_PATH, 'configs/')+'paths_config.ini')
+        config.read(paths_config_location)
+        print(paths_config_location)
         
         self.user_data_path = config['Paths']['user_data_path']  # Path to u.user file
         self.ratings_data_path = config['Paths']['ratings_data_path']  # Path to u.data file
@@ -40,10 +42,6 @@ class MovieAnalysisOperator(BaseOperator):
                 'Documentary', 'Drama', 'Fantasy', 'Film-Noir', 'Horror', 'Musical', 'Mystery',
                 'Romance', 'Sci-Fi', 'Thriller', 'War', 'Western'
             ]
-
-        # Create output directories
-        self.output_dir = '/opt/airflow/data/output/'
-        os.makedirs(self.output_dir, exist_ok=True)
 
     def execute(self, context):
         if self.movie_task_type == "mean_age":

@@ -18,6 +18,7 @@ RUN playwright install
 
 # Set the browser path environment variable
 ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright-browsers
+ENV CONFIG_PATH=/opt/airflow/configs/
 
 USER airflow
 
