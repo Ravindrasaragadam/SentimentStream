@@ -1,1 +1,1 @@
-# SentimentsStream
+# SentimentStream
