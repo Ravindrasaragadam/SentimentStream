@@ -1,0 +1,21 @@
+# Apache Airflow dependencies
+apache-airflow==2.10.2
+apache-airflow-providers-postgres==5.13.1
+apache-airflow-providers-mysql==2.1.0
+apache-airflow-providers-mongo==2.0.0
+apache-airflow-providers-redis==3.8.0  # Updated Redis provider version
+
+# For web scraping
+beautifulsoup4==4.12.2
+requests==2.31.0  # Consider pinning version
+
+pandas
+
+# For database connections
+psycopg2-binary==2.9.9
+
+# For JSON handling (if needed)
+jsonschema==4.18
+
+# For Playwright (if applicable)
+playwright  # Add if using Playwright for scraping
