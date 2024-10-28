@@ -16,3 +16,6 @@ jsonschema==4.18
 
 # For Playwright (if applicable)
 playwright  # Add if using Playwright for scraping
+
+# pytest
+pytest
