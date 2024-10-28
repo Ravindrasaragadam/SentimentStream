@@ -87,7 +87,7 @@ jobs:
           POSTGRES_PASSWORD: airflow
           POSTGRES_DB: airflow
         run: |
-          pytest tests/
+          python -m pytest tests/
   
   deploy:
     runs-on: ubuntu-latest
