@@ -1,7 +1,8 @@
 # SentimentStream
 
 An Docker based apache airflow pipeline covering following use cases:
-
+Pipeline 1: Scrapes articles for HDFC and Tata Motors, performs sentiment analysis, and stores the results.
+Pipeline 2: Analyzes the MovieLens dataset (runs only if Pipeline 1 succeeds on the same day).
 
 The final data is stored in postgres DB.
 
@@ -24,6 +25,7 @@ The final data is stored in postgres DB.
     ./setup.sh
     ```
 This should spin the required containers to run and view Airflow pipelines
+
 3. **Build Docker Image and Start Services** (Alternative to 2, Manual step to start the build):
     ```bash
     docker-compose up --build
