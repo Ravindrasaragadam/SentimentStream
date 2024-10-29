@@ -46,7 +46,7 @@ The final output is stored in a Postgres database.
    - `paths_config.ini`: Specifies input and output path details for data files.
 
 2. **Environment Variables**:
-   Store sensitive data in `.env` files (e.g., API keys, database credentials).
+   Store sensitive data in `.env` files (e.g., database credentials, path refs).
 
 ---
 
