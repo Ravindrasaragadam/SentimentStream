@@ -14,8 +14,8 @@ psycopg2-binary==2.9.9
 # For JSON handling (if needed)
 jsonschema==4.18
 
-# For Playwright (if applicable)
-playwright  # Add if using Playwright for scraping
-
 # pytest
 pytest
+
+vaderSentiment
+scipy

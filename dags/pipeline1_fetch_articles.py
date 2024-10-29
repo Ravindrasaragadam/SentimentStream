@@ -8,7 +8,6 @@ from operators.fetch_articles_operator import FetchArticlesOperator
 from operators.clean_articles_operator import CleanArticlesOperator
 from operators.generate_sentiment_score_operator import GenerateSentimentScoreOperator
 from operators.save_to_storage_operator import SaveToStorageOperator
-import logging
 
 # Default arguments for the DAG
 default_args = {
@@ -21,14 +20,15 @@ default_args = {
 }
 
 # Load configuration
-source_config_location = os.path.abspath('/opt/airflow/configs/source_config.ini')
 config = configparser.ConfigParser()
+CONFIG_PATH = os.getenv("CONFIG_PATH", "configs/")
+SOURCE_CONFIG_PATH = os.path.join(CONFIG_PATH, 'source_config.ini')
 
-config.read(source_config_location)
+config.read(SOURCE_CONFIG_PATH)
 
 sources = config['Sources']['sources'].split(', ')
 keywords = config['Keywords']['keywords'].split(', ')
-max_results = int(config.get('Settings', 'max_results', fallback=5))  # Example for adding max_results
+max_results = int(config.get('Settings', 'max_results', fallback=5))
 
 with DAG(
     'pipeline1_fetch_articles',

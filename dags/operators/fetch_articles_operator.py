@@ -1,6 +1,5 @@
 import requests
 from bs4 import BeautifulSoup
-from playwright.sync_api import sync_playwright
 from airflow.models import BaseOperator
 from datetime import datetime
 import logging
@@ -20,7 +19,7 @@ class FetchArticlesOperator(BaseOperator):
             url = f"https://finshots.in/archive/page/{page}/"
             try:
                 response = requests.get(url)
-                response.raise_for_status()  # Raise an error for bad responses
+                response.raise_for_status() 
             except requests.RequestException as e:
                 self.log.error(f"Error fetching Finshots articles: {e}")
                 break
@@ -53,50 +52,32 @@ class FetchArticlesOperator(BaseOperator):
 
     def fetch_yourstory_articles(self, keyword):
         articles = []
+        url = f"https://yourstory.com/api/v2/tag/stories?slug={keyword.lower().replace(' ','-')}"
 
         try:
-            with sync_playwright() as p:
-                browser = p.chromium.launch(headless=True)
-                page = browser.new_page()
-                url = f"https://yourstory.com/search?q={keyword}"
-                page.goto(url)
+            response = requests.get(url)
+            response.raise_for_status()
+            data = response.json()
+            stories = data.get('stories', [])
+            
+            for story in stories[:self.max_results]:
+                title = story.get('title', 'No title')
+                link = f"https://yourstory.com/{story.get('slug', '')}"
+                date = story.get('publishedAt', datetime.now().isoformat())
+                description = story.get('metadata', {}).get('excerpt', 'No description available')
 
-                # Wait for articles to load
-                page.wait_for_timeout(5000)  # Wait for 5 seconds
-
-                # Find article elements
-                article_elements = page.query_selector_all("article")
-                for article in article_elements[:self.max_results]:
-                    try:
-                        title_tag = article.query_selector('h2')
-                        link_tag = article.query_selector('a')
-                        date_tag = article.query_selector('time')
-                        description_tag = article.query_selector('p')
-
-                        title = title_tag.inner_text() if title_tag else "No title"
-                        link = link_tag.get_attribute('href') if link_tag else ""
-                        date = date_tag.get_attribute('datetime') if date_tag else datetime.now().isoformat()
-                        description = description_tag.inner_text() if description_tag else "No description available"
-
-                        articles.append({
-                            'title': title,
-                            'link': link,
-                            'keyword': keyword,
-                            'date': date,
-                            'description': description,
-                            'source': 'YourStory',
-                            'run_date': datetime.now().isoformat()
-                        })
-
-                        if len(articles) >= self.max_results:
-                            break
-                    except Exception as e:
-                        self.log.error(f"Error processing article: {e}")
-
-                browser.close()  # Close the browser
-        except Exception as e:
-            self.log.error(f"Playwright error: {e}")  # Log error without failing the job
-
+                articles.append({
+                    'title': title,
+                    'link': link,
+                    'keyword': keyword,
+                    'date': date,
+                    'description': description,
+                    'source': 'YourStory',
+                    'run_date': datetime.now().isoformat()
+                })
+        except requests.RequestException as e:
+            self.log.error(f"Error fetching YourStory articles: {e}")
+        
         return articles
 
     def execute(self, context):

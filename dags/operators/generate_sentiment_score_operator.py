@@ -1,6 +1,7 @@
 import random
 from airflow.models import BaseOperator
 from airflow.utils.decorators import apply_defaults
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
 class GenerateSentimentScoreOperator(BaseOperator):
 
@@ -10,8 +11,10 @@ class GenerateSentimentScoreOperator(BaseOperator):
         self.parent_id = parent_id
 
     def generate_sentiment_score(self, article):
-        sentiment_score = random.uniform(0, 1)
-        return sentiment_score
+        sentimentAnalyser = SentimentIntensityAnalyzer()
+        sentiment_score = sentimentAnalyser.polarity_scores("I like the Marvel movies")
+        # sentiment_score = random.uniform(0, 1)
+        return sentiment_score['pos']
 
     def execute(self, context):
         articles = context['task_instance'].xcom_pull(task_ids=self.parent_id)
@@ -23,13 +26,13 @@ class GenerateSentimentScoreOperator(BaseOperator):
         results = []
         for article in articles:
             title = article.get('title')
-            if title:  # Ensure title is present
-                # Mock sentiment score generation
-                sentiment_score = random.uniform(0, 1)
-                
+            if title:  
                 # Log the processing of the article
                 self.log.info(f"Generating sentiment score for article: {title}")
-                
+
+                # Mock sentiment score generation
+                sentiment_score = self.generate_sentiment_score(title)
+
                 # Append all required information, including the sentiment score
                 results.append({
                     'keyword': article.get('keyword', ''),
