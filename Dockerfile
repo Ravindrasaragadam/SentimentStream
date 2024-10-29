@@ -9,4 +9,4 @@ COPY ./dags /opt/airflow/dags
 COPY ./configs /opt/airflow/configs
 EXPOSE 8080
 
-CMD ["airflow", "webserver", "-p", "/app/airflow/config.py"]
+CMD ["airflow", "webserver", "-p", "8080"]
