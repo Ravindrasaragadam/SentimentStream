@@ -7,3 +7,6 @@ COPY ./requirements.txt /requirements.txt
 # Copy your project files into the container
 COPY ./dags /opt/airflow/dags
 COPY ./configs /opt/airflow/configs
+EXPOSE 8080
+
+CMD ["airflow", "webserver", "-p", "/app/airflow/config.py"]
