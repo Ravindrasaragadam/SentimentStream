@@ -18,6 +18,10 @@ x-airflow-common:
     AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
     AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
     CONFIG_PATH: /opt/airflow/configs/
+    POSTGRES_USER: ${POSTGRES_USER}
+    POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    POSTGRES_DATABASE: ${POSTGRES_DATABASE}
+    POSTGRES_HOST: ${POSTGRES_HOST}
 
   volumes:
     - ${AIRFLOW_PROJ_DIR:-.}/dags:/opt/airflow/dags
@@ -133,14 +137,6 @@ services:
     user: "0:0"
     volumes:
       - ${AIRFLOW_PROJ_DIR:-.}:/sources
-
-  playwright:
-    image: mcr.microsoft.com/playwright:v1.34.0-focal
-    environment:
-      <<: *airflow-common-env
-    volumes:
-      - ${AIRFLOW_PROJ_DIR:-.}/data:/data
-    entrypoint: ["tail", "-f", "/dev/null"]
 
 volumes:
   postgres-db-volume:
