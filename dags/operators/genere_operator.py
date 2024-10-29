@@ -6,8 +6,24 @@ from airflow.utils.decorators import apply_defaults
 import configparser
 
 class UserOccupationGenreAnalysisOperator(BaseOperator):
+    """
+    This operator performs user occupation and genre analysis on movie data.
+
+    It reads user, movie, and rating data from CSV files specified in a configuration file,
+    merges the datasets, categorizes users by age group, analyzes genre preferences
+    based on occupation and age group, and saves the top 5 genres for each combination
+    to a PostgreSQL table.
+    """
+
     @apply_defaults
     def __init__(self, *args, **kwargs):
+        """
+        Initializes the UserOccupationGenreAnalysisOperator.
+
+        Args:
+            *args: Arguments passed to the BaseOperator constructor.
+            **kwargs: Keyword arguments passed to the BaseOperator constructor.
+        """
         super(UserOccupationGenreAnalysisOperator, self).__init__(*args, **kwargs)
         self.config = configparser.ConfigParser()
         CONFIG_PATH = os.getenv("CONFIG_PATH", "configs/")
@@ -15,7 +31,19 @@ class UserOccupationGenreAnalysisOperator(BaseOperator):
         self.config.read(PATHS_CONFIG_PATH)
 
     def save_to_postgres(self, table_name, df):
-        """Saves DataFrame to PostgreSQL with defined schema."""
+        """
+        Saves a Pandas DataFrame to a PostgreSQL table with defined schema.
+
+        This method establishes a connection to the PostgreSQL database using environment variables
+        for credentials and connection details. It then checks for the existence of the table and
+        creates it if necessary, defining the schema with columns for age group, occupation, and
+        top genres as a text array. Finally, it iterates through the DataFrame and inserts each
+        row into the table, converting the top genres list to a comma-separated string for storage.
+
+        Args:
+            table_name (str): Name of the table to save the data to.
+            df (pd.DataFrame): The DataFrame containing the data to be saved.
+        """
         conn = psycopg2.connect(
             host=os.getenv("POSTGRES_HOST", "localhost:5347"),
             user=os.getenv("POSTGRES_USER", "airflow"),
@@ -45,6 +73,19 @@ class UserOccupationGenreAnalysisOperator(BaseOperator):
         conn.close()
 
     def execute(self, context):
+        """
+        Executes the user occupation and genre analysis logic.
+
+        This method performs the following steps:
+
+        1. Loads user, movie, and rating data from CSV files specified in the configuration file.
+        2. Merges the datasets on user and item IDs.
+        3. Defines age groups and categorizes users based on their age.
+        4. Converts genre columns to numeric values (handling missing data).
+        5. Groups data by age group and occupation, sums genres for each group, and finds the top 5 genres.
+        6. Saves the results (top genres per age group and occupation) to a PostgreSQL table named 'top_genres'.
+        """
+
         # Load and preprocess datasets
         ratings = pd.read_csv(self.config['Paths']['ratings_data_path'], sep='\t', names=['user_id', 'item_id', 'rating', 'timestamp'], encoding='ISO-8859-1', header=None)
         movies = pd.read_csv(self.config['Paths']['movies_data_path'], sep='|', encoding='ISO-8859-1', header=None,
